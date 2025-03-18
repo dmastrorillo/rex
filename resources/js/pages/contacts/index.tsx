@@ -1,6 +1,6 @@
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+import { Table } from '@/components/table';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem, type Contact } from '@/types';
 import { Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -10,13 +10,17 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Contacts() {
+type ContactsProps = {
+    contacts: Contact[];
+};
+
+export default function Contacts({ contacts }: ContactsProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Contacts" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+                    <Table data={contacts} columnInfo={{ id: 'ID', firstName: 'FirstName', surname: 'Surname', email: 'Email', phone: 'Phone' }} />
                 </div>
             </div>
         </AppLayout>

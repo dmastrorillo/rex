@@ -1,5 +1,5 @@
-import { TableBody } from './TableBody';
-import { TableHead } from './TableHead';
+import { TableBody } from './table-body';
+import { TableHead } from './table-head';
 import { ColumnInfo, GenericTableData } from './types';
 
 

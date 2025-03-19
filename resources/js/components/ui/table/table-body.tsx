@@ -19,7 +19,9 @@ export function TableBody<T extends GenericTableData[]>({ data, columns }: Table
                     {data.map((row, index) => (
                         <tr key={row.id ?? index}>
                             {columns.map((column) => (
-                                <td key={String(column)}>{row[column]}</td>
+                                <td key={String(column)} className="text-center">
+                                    <div className="p-2">{row[column]}</div>
+                                </td>
                             ))}
                         </tr>
                     ))}

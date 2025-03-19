@@ -3,13 +3,18 @@
 namespace App\Services;
 
 use App\Models\Contact;
+use App\Traits\DBTransactions;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class ContactService
 {
+
+
+    use DBTransactions;
 
     public function getSearchQuery(Request $request)
     {
@@ -39,7 +44,7 @@ class ContactService
      *
      * @param array $data contact data
      * @return Contact Created contact
-     * @throws ValidationException
+     * @throws ValidationException|QueryException|\Exception
      */
     public function createContact(array $data)
     {
@@ -54,7 +59,11 @@ class ContactService
 
             $data = $this->validate($data, $rules);
 
-            return Contact::create($data);
+            $fn = function () use ($data) {
+               return Contact::create($data);
+            };
+
+            return $this->inTransaction() ? $fn() : $this->transaction($fn);
         } catch (QueryException $e) {
             $this->handleQueryException($e);
         } catch (\Exception $e) {
@@ -70,7 +79,12 @@ class ContactService
     public function deleteContact(Contact $contact)
     {
 
-        $contact->delete();
+        $fn = function () use ($contact) {
+            $contact->delete();
+        };
+
+        $this->inTransaction() ? $fn()  : $this->transaction($fn);
+
 
         return $contact->id;
     }
@@ -142,10 +156,13 @@ class ContactService
             $data = $this->validate($data, $rules);
             unset($data['id']);
 
-            $contact = Contact::findOrFail($id);
-            $contact->update($data);
+            $fn = function () use ($data, $id) {
+                $contact = Contact::findOrFail($id);
+                $contact->update($data);
+                return $contact;
+            };
 
-            return $contact;
+            return $this->inTransaction() ? $fn() : $this->transaction($fn);
         } catch (QueryException $e) {
             $this->handleQueryException($e);
         } catch (\Exception $e) {

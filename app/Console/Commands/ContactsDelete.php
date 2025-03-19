@@ -4,12 +4,13 @@ namespace App\Console\Commands;
 
 use App\Console\Traits\InteractiveCommandTrait;
 use App\Services\ContactService;
+use App\Traits\DBTransactions;
 use Illuminate\Console\Command;
 use Illuminate\Validation\ValidationException;
 
 class ContactsDelete extends Command
 {
-    use InteractiveCommandTrait;
+    use InteractiveCommandTrait, DBTransactions;
     /**
      * The name and signature of the console command.
      *
@@ -60,9 +61,11 @@ class ContactsDelete extends Command
 
         try {
 
-            $contact = $this->contactService->getContact($data);
-            $result = $this->contactService->deleteContact($contact);
-            return $this->handleResult($result, "Contact deleted successfully");
+            return $this->transaction(function () use ($data) {
+                $contact = $this->contactService->getContact($data);
+                $result = $this->contactService->deleteContact($contact);
+                return $this->handleResult($result, "Contact deleted successfully");
+            });
         } catch (ValidationException $e) {
             return $this->handleValidationError($e);
         } catch (\Exception $e) {

@@ -62,8 +62,7 @@ class ContactController extends Controller
 
     public function update(Request $request, Contact $contact)
     {
-
-        $contact->update($request->all());
+        $this->contactService->updateContact($request->all(), $contact->id);
 
         $this->flashSuccess('Contact updated successfully');
 
@@ -73,7 +72,7 @@ class ContactController extends Controller
     public function destroy(Contact $contact, Request $request)
     {
 
-        $contact->delete();
+        $this->contactService->deleteContact($contact);
 
         $this->flashSuccess('Contact deleted successfully');
         return $this->redirectWithSearchQuery('contacts.index', $request);

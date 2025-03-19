@@ -82,15 +82,10 @@ trait InteractiveCommandTrait
      */
     protected function handleResult($result, string $successMessage)
     {
-        if ($result['success']) {
-            $this->info($successMessage);
-            $this->info(json_encode($result['response'], JSON_PRETTY_PRINT));
-            return 0;
-        } else {
-            $this->error('Operation failed!');
-            $this->error('An unexpected error occurred.');
-            return 1;
-        }
+
+        $this->info($successMessage);
+        $this->info(json_encode($result, JSON_PRETTY_PRINT));
+        return 0;
     }
 
     /**

@@ -60,8 +60,8 @@ class ContactsDelete extends Command
 
         try {
 
-            $result = $this->contactService->deleteContact($data);
-
+            $contact = $this->contactService->getContact($data);
+            $result = $this->contactService->deleteContact($contact);
             return $this->handleResult($result, "Contact deleted successfully");
         } catch (ValidationException $e) {
             return $this->handleValidationError($e);

@@ -11,14 +11,6 @@ use Illuminate\Validation\ValidationException;
 class ContactService
 {
 
-    protected function createOperationSuccessfulResponse($response)
-    {
-        return [
-            'success' => true,
-            'response' => $response
-        ];
-    }
-
     public function getSearchQuery(Request $request)
     {
         return $request->input('searchQuery');
@@ -46,24 +38,23 @@ class ContactService
      * Create a new contact in the database
      *
      * @param array $data contact data
-     * @return array Response with status and messages
+     * @return Contact Created contact
+     * @throws ValidationException
      */
     public function createContact(array $data)
     {
         $rules = [
             'firstName' => 'required',
             'surname' => 'required',
-            'email' => ['required', 'email'],
-            'phone' => ['required', 'regex:/^(\+61\d{9}|\+64\d{8,9})$/'],
+            'email' => ['required', 'email', 'unique:contacts,email'],
+            'phone' => ['required', 'regex:/^(\+61\d{9}|\+64\d{8,9})$/', 'unique:contacts,phone'],
         ];
 
         try {
 
             $data = $this->validate($data, $rules);
 
-            $contact = Contact::create($data);
-
-            return $this->createOperationSuccessfulResponse($contact);
+            return Contact::create($data);
         } catch (QueryException $e) {
             $this->handleQueryException($e);
         } catch (\Exception $e) {
@@ -74,21 +65,14 @@ class ContactService
     /**
      * Delete a contact from the database
      * @param int $id Contact ID
-     * @return array Response with status and messages
-     * @throws ValidationException
+     * @return int Contact ID of deleted contact
      */
-    public function deleteContact($id)
+    public function deleteContact(Contact $contact)
     {
 
-        $rules = [
-            'id' => 'required|exists:contacts,id'
-        ];
+        $contact->delete();
 
-
-        $data = $this->validate(['id' => $id], $rules);
-        $contact = Contact::destroy($data['id']);
-
-        return $this->createOperationSuccessfulResponse($contact);
+        return $contact->id;
     }
 
     /**
@@ -114,6 +98,28 @@ class ContactService
     }
 
     /**
+     * Get a contact from the database
+     * @param array $data Contact ID
+     * @return Contact Contact
+     */
+    public function getContact($data)
+    {
+
+        $rules = [
+            'id' => 'required|exists:contacts,id'
+        ];
+
+        try {
+            $validated = $this->validate($data, $rules);
+            return Contact::findOrFail($validated['id']);
+        } catch (QueryException $e) {
+            $this->handleQueryException($e);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Update a contact in the database
      * @param array $data Contact data
      * @param int $id Contact ID
@@ -123,19 +129,23 @@ class ContactService
     public function updateContact(array $data, $id)
     {
         $rules = [
+            'id' => 'required|exists:contacts,id',
             'firstName' => 'sometimes',
             'surname' => 'sometimes',
-            'email' => ['sometimes', 'nullable', 'email'],
-            'phone' => ['sometimes', 'nullable', 'regex:/^(\+61\d{9}|\+64\d{8,9})$/'],
+            'email' => ['sometimes', 'nullable', 'email', 'unique:contacts,email,' . $id],
+            'phone' => ['sometimes', 'nullable', 'regex:/^(\+61\d{9}|\+64\d{8,9})$/', 'unique:contacts,phone,' . $id],
         ];
+
+        $data['id'] = $id;
 
         try {
             $data = $this->validate($data, $rules);
+            unset($data['id']);
 
             $contact = Contact::findOrFail($id);
             $contact->update($data);
 
-            return $this->createOperationSuccessfulResponse($contact);
+            return $contact;
         } catch (QueryException $e) {
             $this->handleQueryException($e);
         } catch (\Exception $e) {

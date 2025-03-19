@@ -12,14 +12,16 @@ export type TableProps<T extends GenericTableData[]> = {
     columnInfo: ColumnInfo<T>;
 
     paginationData?: PaginatedData<T[number]>;
+
+    onRowClick?: (rowData: T[number], index: number) => void;
 };
 
-export function Table<T extends GenericTableData[]>({ data, columnInfo, paginationData }: TableProps<T>) {
+export function Table<T extends GenericTableData[]>({ data, columnInfo, paginationData, onRowClick }: TableProps<T>) {
     return (
         <>
             <table className="w-full">
                 <TableHead columns={Object.values(columnInfo).filter(Boolean) as string[]} />
-                <TableBody data={data} columns={Object.keys(columnInfo)} />
+                <TableBody data={data} columns={Object.keys(columnInfo)} onRowClick={onRowClick} />
             </table>
             {paginationData && (<TableFooter data={paginationData} />)}
         </>

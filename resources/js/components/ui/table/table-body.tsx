@@ -1,11 +1,14 @@
+import { cn } from '@/lib/utils';
 import { GenericTableData, GetKeyOf } from './types';
 
 export type TableBodyProps<T extends GenericTableData[]> = {
     data: T;
     columns: GetKeyOf<T>[];
+    onRowClick?: (rowData: T[number], index: number) => void;
 };
 
-export function TableBody<T extends GenericTableData[]>({ data, columns }: TableBodyProps<T>) {
+export function TableBody<T extends GenericTableData[]>({ data, columns, onRowClick }: TableBodyProps<T>) {
+    const isRowClickable = Boolean(onRowClick);
     return (
         <tbody>
             {data.length === 0 ? (
@@ -17,7 +20,7 @@ export function TableBody<T extends GenericTableData[]>({ data, columns }: Table
             ) : (
                 <>
                     {data.map((row, index) => (
-                        <tr key={row.id ?? index}>
+                        <tr className={cn(isRowClickable && 'hover:bg-secondary cursor-pointer')} key={row.id ?? index} onClick={() => onRowClick?.(row, index)}>
                             {columns.map((column) => (
                                 <td key={String(column)} className="text-center">
                                     <div className="p-2">{row[column]}</div>

@@ -2,7 +2,7 @@ import { ContactsToolbar } from '@/components/contacts/contacts-toolbar';
 import { Table } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { PaginatedData, type BreadcrumbItem, type Contact } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -27,6 +27,7 @@ export default function Contacts({ contacts, searchQuery }: ContactsProps) {
                         data={contacts.data}
                         columnInfo={{ id: 'ID', firstName: 'FirstName', surname: 'Surname', email: 'Email', phone: 'Phone' }}
                         paginationData={contacts}
+                        onRowClick={({ id }) => router.visit(route('contacts.read', { contact: id }))}
                     />
                 </div>
             </div>

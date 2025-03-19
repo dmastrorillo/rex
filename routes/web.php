@@ -15,6 +15,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get("contacts", [ContactController::class, "show"])->name('contacts');
 
+    Route::get("contacts/{contact}", [ContactController::class, "read"])->name('contacts.read');
+
     Route::post("contacts", [ContactController::class, "store"])->name('contacts.store');
 
     Route::put("contacts/{contact}", [ContactController::class, "update"])->name('contacts.update');

@@ -6,17 +6,11 @@ import { Button } from '../ui/button';
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-
-type ContactForm = {
-    firstName: string;
-    surname: string;
-    email: string;
-    phone: string;
-};
+import { ContactForm } from './types';
 
 export function CreateContactModal() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { data, setData, post, processing, errors, reset, clearErrors, setError } = useForm<Required<ContactForm>>({
+    const { data, setData, post, processing, errors, reset, clearErrors, setError } = useForm<ContactForm>({
         email: '',
         firstName: '',
         surname: '',

@@ -37,7 +37,7 @@ class ContactController extends Controller
     public function show(Request $request)
     {
         $searchQuery = $this->getSearchQuery($request);
-        
+
         return Inertia::render('contacts/index', [
             'contacts' =>  $this->contactService->getContacts($searchQuery, null),
             'searchQuery' => $searchQuery
@@ -58,6 +58,13 @@ class ContactController extends Controller
         return $this->redirectWithSearchQuery('contacts', $request);
     }
 
+    public function read(Contact $contact)
+    {
+        return Inertia::render('contacts/view', [
+            'contact' => $contact
+        ]);
+    }
+
     public function update(Request $request, Contact $contact)
     {
 
@@ -65,7 +72,7 @@ class ContactController extends Controller
 
         $this->flashSuccess('Contact updated successfully');
 
-        return $this->redirectWithSearchQuery('contacts', $request);
+        return  redirect()->route('contacts.read', ['contact' => $contact->id]);
     }
 
     public function destroy(Contact $contact, Request $request)

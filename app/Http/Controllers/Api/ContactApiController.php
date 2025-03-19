@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Contact;
+use Illuminate\Http\Request;
+use App\Services\ContactService;
+
+class ContactApiController extends Controller
+{
+
+    use \App\Traits\StandardApiResponses;
+
+    /**
+     * @var ContactService
+     */
+    protected $contactService;
+
+    public function __construct(\App\Services\ContactService $contactService)
+    {
+        $this->contactService = $contactService;
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+        return $this->successResponse($this->contactService->getContacts($this->contactService->getSearchQuery($request)));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        try {
+            $contact = $this->contactService->createContact($request->all())["response"];
+            return $this->successResponse($contact, 201)->header('Location', route('contacts.show', ['contact' => $contact->id]));
+        } catch (\Exception $e) {
+            return $this->handleException($e);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Contact $contact, Request $request)
+    {
+        try {
+            return $this->successResponse($contact);
+        } catch (\Exception $e) {
+            return $this->handleException($e);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Contact $contact)
+    {
+        try {
+            return $this->successResponse($this->contactService->updateContact($request->all(), $contact->id)["response"]);
+        } catch (\Exception $e) {
+            return $this->handleException($e);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Contact $contact)
+    {
+        try {
+            $contact->delete();
+            return $this->successResponse($contact);
+        } catch (\Exception $e) {
+            return $this->handleException($e);
+        }
+    }
+}

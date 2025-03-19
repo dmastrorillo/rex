@@ -23,20 +23,15 @@ class ContactController extends Controller
         $this->contactService = $contactService;
     }
 
-    private function getSearchQuery(Request $request)
-    {
-        return $request->input('searchQuery');
-    }
-
     private function redirectWithSearchQuery(string $route, Request $request)
     {
-        return redirect()->route($route, ['searchQuery' => $this->getSearchQuery($request)]);
+        return redirect()->route($route, ['searchQuery' => $this->contactService->getSearchQuery($request)]);
     }
 
 
     public function index(Request $request)
     {
-        $searchQuery = $this->getSearchQuery($request);
+        $searchQuery = $this->contactService->getSearchQuery($request);
 
         return Inertia::render('contacts/index', [
             'contacts' =>  $this->contactService->getContacts($searchQuery, null),
@@ -50,7 +45,7 @@ class ContactController extends Controller
 
 
         $this->flashSuccess(
-            $this->getSearchQuery($request)
+            $this->contactService->getSearchQuery($request)
                 ? 'Contact created successfully, but it may not appear in the list due to your current search criteria.'
                 : 'Contact created successfully'
         );

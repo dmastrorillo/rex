@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Contact;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -16,6 +17,11 @@ class ContactService
             'success' => true,
             'response' => $response
         ];
+    }
+
+    public function getSearchQuery(Request $request)
+    {
+        return $request->input('searchQuery');
     }
 
     /**
@@ -80,8 +86,7 @@ class ContactService
 
 
         $data = $this->validate(['id' => $id], $rules);
-        $contact = Contact::findOrFail($data['id'])->first();
-        $contact->delete();
+        $contact = Contact::destroy($data['id']);
 
         return $this->createOperationSuccessfulResponse($contact);
     }

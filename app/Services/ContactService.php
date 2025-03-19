@@ -97,7 +97,8 @@ class ContactService
         $query = Contact::query();
 
         if ($searchQuery) {
-            $query->whereRaw('(firstName LIKE ? OR surname LIKE ? OR email LIKE ? OR phone LIKE ?)', 
+            $query->whereRaw(
+                '(firstName LIKE ? OR surname LIKE ? OR email LIKE ? OR phone LIKE ?)',
                 array_fill(0, 4, "%$searchQuery%")
             );
         }
@@ -105,6 +106,36 @@ class ContactService
         // For web requests, Laravel will automatically handle the page from the request
         // For CLI, we'll use the explicitly provided page number
         return $query->paginate(10, ['*'], 'page', $page)->appends(['searchQuery' => $searchQuery]);
+    }
+
+    /**
+     * Update a contact in the database
+     * @param array $data Contact data
+     * @param int $id Contact ID
+     * @return array Response with status and messages
+     * @throws ValidationException
+     */
+    public function updateContact(array $data, $id)
+    {
+        $rules = [
+            'firstName' => 'sometimes',
+            'surname' => 'sometimes',
+            'email' => ['sometimes', 'nullable', 'email'],
+            'phone' => ['sometimes', 'nullable', 'regex:/^(\+61\d{9}|\+64\d{8,9})$/'],
+        ];
+
+        try {
+            $data = $this->validate($data, $rules);
+
+            $contact = Contact::findOrFail($id);
+            $contact->update($data);
+
+            return $this->createOperationSuccessfulResponse($contact);
+        } catch (QueryException $e) {
+            $this->handleQueryException($e);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     /**

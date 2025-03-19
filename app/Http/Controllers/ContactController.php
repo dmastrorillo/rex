@@ -18,7 +18,7 @@ class ContactController extends Controller
      */
     protected $contactService;
 
-    public function __construct(ContactService $contactService)
+    public function __construct(\App\Services\ContactService $contactService)
     {
         $this->contactService = $contactService;
     }
@@ -34,7 +34,7 @@ class ContactController extends Controller
     }
 
 
-    public function show(Request $request)
+    public function index(Request $request)
     {
         $searchQuery = $this->getSearchQuery($request);
 
@@ -58,7 +58,7 @@ class ContactController extends Controller
         return $this->redirectWithSearchQuery('contacts', $request);
     }
 
-    public function read(Contact $contact)
+    public function show(Contact $contact)
     {
         return Inertia::render('contacts/view', [
             'contact' => $contact

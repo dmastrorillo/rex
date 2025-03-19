@@ -9,13 +9,10 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
 
-    Route::get("contacts", [ContactController::class, "show"])->name('contacts');
+    Route::get("contacts", [ContactController::class, "index"])->name('contacts');
 
-    Route::get("contacts/{contact}", [ContactController::class, "read"])->name('contacts.read');
+    Route::get("contacts/{contact}", [ContactController::class, "show"])->name('contacts.read');
 
     Route::post("contacts", [ContactController::class, "store"])->name('contacts.store');
 

@@ -43,7 +43,7 @@ class ContactApiController extends Controller
     public function store(Request $request)
     {
         try {
-            $contact = $this->contactService->createContact($request->all())["response"];
+            $contact = $this->contactService->createContact($request->all());
             return $this->successResponse($contact, 201)->header('Location', route('contacts.show', ['contact' => $contact->id]));
         } catch (\Exception $e) {
             return $this->handleException($e);
@@ -68,7 +68,7 @@ class ContactApiController extends Controller
     public function update(Request $request, Contact $contact)
     {
         try {
-            return $this->successResponse($this->contactService->updateContact($request->all(), $contact->id)["response"]);
+            return $this->successResponse($this->contactService->updateContact($request->all(), $contact->id));
         } catch (\Exception $e) {
             return $this->handleException($e);
         }
@@ -80,8 +80,8 @@ class ContactApiController extends Controller
     public function destroy(Contact $contact)
     {
         try {
-            $contact->delete();
-            return $this->successResponse($contact);
+           return $this->successResponse(["id " => $this->contactService->deleteContact($contact)]);
+
         } catch (\Exception $e) {
             return $this->handleException($e);
         }

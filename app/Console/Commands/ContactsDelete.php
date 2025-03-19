@@ -64,7 +64,7 @@ class ContactsDelete extends Command
             return $this->transaction(function () use ($data) {
                 $contact = $this->contactService->getContact($data);
                 $result = $this->contactService->deleteContact($contact);
-                return $this->handleResult($result, "Contact deleted successfully");
+                return $this->handleResult(["id" => $result], "Contact deleted successfully");
             });
         } catch (ValidationException $e) {
             return $this->handleValidationError($e);

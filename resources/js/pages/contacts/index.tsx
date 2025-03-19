@@ -27,7 +27,7 @@ export default function Contacts({ contacts, searchQuery }: ContactsProps) {
                         data={contacts.data}
                         columnInfo={{ id: 'ID', firstName: 'FirstName', surname: 'Surname', email: 'Email', phone: 'Phone' }}
                         paginationData={contacts}
-                        onRowClick={({ id }) => router.visit(route('contacts.read', { contact: id }))}
+                        onRowClick={({ id }) => router.visit(route('contacts.show', { contact: id }))}
                     />
                 </div>
             </div>

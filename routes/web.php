@@ -10,9 +10,9 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::get("contacts", [ContactController::class, "index"])->name('contacts');
+    Route::get("contacts", [ContactController::class, "index"])->name('contacts.index');
 
-    Route::get("contacts/{contact}", [ContactController::class, "show"])->name('contacts.read');
+    Route::get("contacts/{contact}", [ContactController::class, "show"])->name('contacts.show');
 
     Route::post("contacts", [ContactController::class, "store"])->name('contacts.store');
 

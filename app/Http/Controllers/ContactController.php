@@ -50,7 +50,7 @@ class ContactController extends Controller
                 : 'Contact created successfully'
         );
 
-        return $this->redirectWithSearchQuery('contacts', $request);
+        return $this->redirectWithSearchQuery('contacts.index', $request);
     }
 
     public function show(Contact $contact)
@@ -67,7 +67,7 @@ class ContactController extends Controller
 
         $this->flashSuccess('Contact updated successfully');
 
-        return  redirect()->route('contacts.read', ['contact' => $contact->id]);
+        return  redirect()->route('contacts.show', ['contact' => $contact->id]);
     }
 
     public function destroy(Contact $contact, Request $request)
@@ -76,7 +76,7 @@ class ContactController extends Controller
         $contact->delete();
 
         $this->flashSuccess('Contact deleted successfully');
-        return $this->redirectWithSearchQuery('contacts', $request);
+        return $this->redirectWithSearchQuery('contacts.index', $request);
     }
 
     public function call(Contact $contact)
@@ -94,6 +94,6 @@ class ContactController extends Controller
         $outcome = array_rand($outcomes);
         sleep(2);
 
-        return redirect()->route('contacts')->with('outcome', $outcomes[$outcome]);
+        return redirect()->route('contacts.index')->with('outcome', $outcomes[$outcome]);
     }
 }

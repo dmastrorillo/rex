@@ -33,31 +33,14 @@ class ContactController extends Controller
         return redirect()->route($route, ['searchQuery' => $this->getSearchQuery($request)]);
     }
 
-    private function getContacts(Request $request)
-    {
-        $search = $this->getSearchQuery($request);
-
-        if (!$search) {
-            return Contact::paginate(10);
-        }
-
-
-
-        return Contact::where('firstName', 'like', "%$search%")
-            ->orWhere('lastName', 'like', "%$search%")
-            ->orWhere('email', 'like', "%$search%")
-            ->orWhere('phone', 'like', "%$search%")->paginate(10)->appends([
-                'searchQuery' => $search,
-            ]);
-    }
-
 
     public function show(Request $request)
     {
-
+        $searchQuery = $this->getSearchQuery($request);
+        
         return Inertia::render('contacts/index', [
-            'contacts' =>  $this->getContacts($request),
-            'searchQuery' => $this->getSearchQuery($request)
+            'contacts' =>  $this->contactService->getContacts($searchQuery, null),
+            'searchQuery' => $searchQuery
         ]);
     }
 

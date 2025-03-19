@@ -87,6 +87,27 @@ class ContactService
     }
 
     /**
+     * Get contacts from the database
+     * @param string|null $searchQuery Search query
+     * @param int|null $page Page number (default: null)
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function getContacts(?string $searchQuery, ?int $page = null)
+    {
+        $query = Contact::query();
+
+        if ($searchQuery) {
+            $query->whereRaw('(firstName LIKE ? OR surname LIKE ? OR email LIKE ? OR phone LIKE ?)', 
+                array_fill(0, 4, "%$searchQuery%")
+            );
+        }
+
+        // For web requests, Laravel will automatically handle the page from the request
+        // For CLI, we'll use the explicitly provided page number
+        return $query->paginate(10, ['*'], 'page', $page)->appends(['searchQuery' => $searchQuery]);
+    }
+
+    /**
      * Handle query exceptions, particularly for unique constraint violations
      *
      * @param QueryException $e

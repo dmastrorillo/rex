@@ -19,7 +19,8 @@ class APIException extends Exception
         "PERMISSION_DENIED" => 403,
         "RATE_LIMIT_EXCEEDED" => 429,
         "UNEXPECTED_ERROR" => 500,
-        "METHOD_NOT_ALLOWED" => 405
+        "METHOD_NOT_ALLOWED" => 405,
+        "CALL_NOT_FOUND" => 404
     ];
 
     protected int $status;
@@ -172,6 +173,20 @@ class APIException extends Exception
             ["method" => $request->method()],
             ["Ensure you are using the correct HTTP method for this route."],
             "https://api.example.com/docs/errors/method-not-allowed"
+        );
+    }
+
+    /**
+     * Create an API exception for a call not found error.
+     */
+    public static function createCallNotFound(CallNotFoundException $e)
+    {
+        return new APIException(
+            "The requested call was not found.",
+            "CALL_NOT_FOUND",
+            ["call_id" => $e->getCallId()],
+            ["Ensure the call ID is correct."],
+            "https://api.example.com/docs/errors/call-not-found"
         );
     }
 

@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Exceptions\APIException;
+use App\Exceptions\CallNotFoundException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
@@ -53,6 +54,11 @@ trait StandardApiResponses
         // Handle Rate Limiting (429)
         if ($exception instanceof ThrottleRequestsException) {
             throw APIException::createRateLimitExceeded($exception);
+        }
+
+        //Handle CallNotFound Exception
+        if ($exception instanceof CallNotFoundException) {
+            throw APIException::createCallNotFound($exception);
         }
 
         // Fallback for all other exceptions

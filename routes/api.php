@@ -13,4 +13,6 @@ Route::prefix('v1')->group(function () {
     Route::get('/contacts/{contact}', [ContactApiController::class, 'show'])->name('contacts.show');
     Route::put('/contacts/{contact}', [ContactApiController::class, 'update'])->name('contacts.update');
     Route::delete('/contacts/{contact}', [ContactApiController::class, 'destroy'])->name('contacts.destroy');
+    Route::post('/contacts/{contact}/call', [ContactApiController::class, 'initiateCall'])->name('contacts.initiateCall');
+    Route::get('/calls/{call}', [ContactApiController::class, 'pollCall'])->name('calls.pollCall');
 })->middleware('auth:sanctum');

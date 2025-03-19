@@ -157,6 +157,34 @@ The application includes command-line tools for managing contacts:
             --id[=ID]         ID of the contact to delete
     ```
 
+5. Call a contact:
+
+    ```
+    php artisan contacts:call
+        Description:
+        Call a contact via the command line
+
+        Usage:
+        contacts:call [options]
+
+        Options:
+            --id[=ID]         ID of the contact to call
+    ```
+
+6. Poll a call:
+
+    ```
+    php artisan contacts:poll
+        Description:
+        Poll a call via the command line
+
+        Usage:
+        contacts:poll [options]
+
+        Options:
+            --id[=ID]         ID of the call to poll
+    ```
+
 ## Validation Rules
 
 When creating or updating contacts, the following validation rules apply:

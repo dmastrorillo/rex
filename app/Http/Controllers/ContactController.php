@@ -77,22 +77,4 @@ class ContactController extends Controller
         $this->flashSuccess('Contact deleted successfully');
         return $this->redirectWithSearchQuery('contacts.index', $request);
     }
-
-    public function call(Contact $contact)
-    {
-
-        //Mocked
-
-        $outcomes = [
-            'success' => 'Call was successful',
-            'busy' => 'The contact is busy',
-            'no-answer' => 'The contact did not answer',
-            'failed' => 'The call failed'
-        ];
-
-        $outcome = array_rand($outcomes);
-        sleep(2);
-
-        return redirect()->route('contacts.index')->with('outcome', $outcomes[$outcome]);
-    }
 }

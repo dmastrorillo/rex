@@ -14,6 +14,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::get("contacts", [ContactController::class, "show"])->name('contacts');
+
+    Route::post("contacts", [ContactController::class, "store"])->name('contacts.store');
+
+    Route::put("contacts/{contact}", [ContactController::class, "update"])->name('contacts.update');
+
+    Route::delete("contacts/{contact}", [ContactController::class, "destroy"])->name('contacts.destroy');
+
+    Route::post('contacts/{contact}/call', [ContactController::class, 'call'])->name('contacts.call');
 });
 
 require __DIR__ . '/settings.php';

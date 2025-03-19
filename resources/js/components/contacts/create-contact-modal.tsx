@@ -29,6 +29,8 @@ export function CreateContactModal() {
         const searchParams = new URLSearchParams(window.location.search);
         const currentSearch = searchParams.get('searchQuery');
 
+        clearErrors();
+
         post(route('contacts.store', { _query: { searchQuery: currentSearch } }), {
             onSuccess: () => {
                 closeModal();

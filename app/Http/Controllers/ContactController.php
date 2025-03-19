@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Contact;
 use App\Traits\WithFlashMessages;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class ContactController extends Controller
@@ -62,13 +64,30 @@ class ContactController extends Controller
 
     public function store(Request $request)
     {
-
         $this->validateRequest($request);
 
-        Contact::create($request->all());
-
-        $this->flashSuccess($this->getSearchQuery($request) ? 'Contact created successfully, but it may not appear in the list due to your current search criteria.' : 'Contact created successfully');
-        return $this->redirectWithSearchQuery('contacts', $request);
+        try {
+            Contact::create($request->all());
+            $this->flashSuccess($this->getSearchQuery($request) ? 'Contact created successfully, but it may not appear in the list due to your current search criteria.' : 'Contact created successfully');
+            return $this->redirectWithSearchQuery('contacts', $request);
+        } catch (QueryException $e) {
+            $code = $e->getCode();
+            $message = strtolower($e->getMessage());
+            if (str_starts_with($code, '23') && str_contains($message, 'unique')) {
+                if (str_contains($message, 'contacts.email')) {
+                    throw ValidationException::withMessages([
+                        'email' => ['This email address is already registered in the system.']
+                    ]);
+                }
+                if (str_contains($message, 'contacts.phone')) {
+                    throw ValidationException::withMessages([
+                        'phone' => ['This phone number is already registered in the system.']
+                    ]);
+                }
+            }
+            // Rethrow unknown exceptions for now
+            throw $e;
+        }
     }
 
     public function update(Request $request, Contact $contact)

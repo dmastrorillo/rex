@@ -1,6 +1,6 @@
 import { useForm } from '@inertiajs/react';
 import { LoaderCircle, Plus } from 'lucide-react';
-import { FormEventHandler, useEffect, useState } from 'react';
+import { FormEventHandler, useState } from 'react';
 import InputError from '../input-error';
 import { Button } from '../ui/button';
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogTitle, DialogTrigger } from '../ui/dialog';
@@ -14,28 +14,22 @@ type ContactForm = {
     phone: string;
 };
 
-type CreateContactModalProps = {
-    currentSearchQuery: string;
-};
-
-export function CreateContactModal({ currentSearchQuery }: CreateContactModalProps) {
+export function CreateContactModal() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { data, setData, post, processing, errors, reset, clearErrors, setError } = useForm<Required<ContactForm & { currentSearch?: string }>>({
+    const { data, setData, post, processing, errors, reset, clearErrors, setError } = useForm<Required<ContactForm>>({
         email: '',
         firstName: '',
         surname: '',
         phone: '',
-        currentSearch: currentSearchQuery,
     });
-
-    useEffect(() => {
-        setData('currentSearch', currentSearchQuery);
-    }, [currentSearchQuery, setData]);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post(route('contacts.store'), {
+        const searchParams = new URLSearchParams(window.location.search);
+        const currentSearch = searchParams.get('searchQuery');
+
+        post(route('contacts.store', { _query: { searchQuery: currentSearch } }), {
             onSuccess: () => {
                 closeModal();
             },

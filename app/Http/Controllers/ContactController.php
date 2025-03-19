@@ -24,7 +24,7 @@ class ContactController extends Controller
 
     private function getSearchQuery(Request $request)
     {
-        return $request->input('searchQuery') ?? $request->input("currentSearch");
+        return $request->input('searchQuery');
     }
 
     private function redirectWithSearchQuery(string $route, Request $request)
@@ -32,20 +32,22 @@ class ContactController extends Controller
         return redirect()->route($route, ['searchQuery' => $this->getSearchQuery($request)]);
     }
 
-    private function getContacts($request)
+    private function getContacts(Request $request)
     {
-
         $search = $this->getSearchQuery($request);
 
         if (!$search) {
-            return Contact::all();
+            return Contact::paginate(10);
         }
+
+
 
         return Contact::where('firstName', 'like', "%$search%")
             ->orWhere('lastName', 'like', "%$search%")
             ->orWhere('email', 'like', "%$search%")
-            ->orWhere('phone', 'like', "%$search%")
-            ->get();
+            ->orWhere('phone', 'like', "%$search%")->paginate(10)->appends([
+                'searchQuery' => $search,
+            ]);
     }
 
 

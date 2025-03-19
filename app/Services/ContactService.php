@@ -66,6 +66,27 @@ class ContactService
     }
 
     /**
+     * Delete a contact from the database
+     * @param int $id Contact ID
+     * @return array Response with status and messages
+     * @throws ValidationException
+     */
+    public function deleteContact($id)
+    {
+
+        $rules = [
+            'id' => 'required|exists:contacts,id'
+        ];
+
+
+        $data = $this->validate(['id' => $id], $rules);
+        $contact = Contact::findOrFail($data['id'])->first();
+        $contact->delete();
+
+        return $this->createOperationSuccessfulResponse($contact);
+    }
+
+    /**
      * Handle query exceptions, particularly for unique constraint violations
      *
      * @param QueryException $e
